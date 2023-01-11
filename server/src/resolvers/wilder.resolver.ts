@@ -6,26 +6,39 @@ import Wilder, {
   UpdateInput,
 } from "../entity/Wilder";
 import { ResponseMessage } from "../services/common.type";
+import WilderService from "../services/wilder.service";
+
 @Resolver()
 export default class WilderResolver {
   @Query(() => [Wilder]) //retournera un tableau de Wilder
-  async readWilder(): Promise<Wilder[]> {
+  async readWilders(
+    @Arg("nameContains", {nullable: true}) nameContains: string
+  ): Promise<Wilder[]> {
     //retournera un tableau de Wilder
-    return [];
+    let wilders = await new WilderService().readWilders(nameContains);
+    return wilders;
   }
 
   @Query(() => Wilder) //retournera un Wilder
-  async readOneWilder(@Arg("id") id: String): Promise<Wilder> {
-    //retournera un Wilder
+  async readOneWilder(@Arg("id") id: string): Promise<Wilder> {
     //j'ai id, je peux aller chercher le wilder à partir de cet id
     return {} as Wilder; //il faudra retournera le Wilder
   }
 
   @Mutation(() => Wilder) //retounera un Wilder
-  async createWilder(@Arg("createInput") createInput: CreateInput): Promise<Wilder> {
+  async createWilder(
+    @Arg("createInput") createInput: CreateInput
+  ): Promise<Wilder> {
     //retounera un Wilder
+    const { name } = createInput;
+    if (name.length > 100 || name.length === 0) {
+      throw new Error(
+        "the name should have a length between 1 and 100 characters"
+      );
+    }
 
-    return {} as Wilder; // retournera un Wilder
+    let wilder = await new WilderService().createWilder({ name });
+    return wilder; // retournera un Wilder
   }
 
   @Mutation(() => ResponseMessage) // retournera {success: true, message: ""}
@@ -38,7 +51,7 @@ export default class WilderResolver {
   }
 
   @Mutation(() => ResponseMessage) // retournera {success: true, message: ""}
-  async deleteWilder(@Arg("id") id: String): Promise<ResponseMessage> {
+  async deleteWilder(@Arg("id") id: string): Promise<ResponseMessage> {
     // retournera {success: true, message: ""}
     return {};
   }

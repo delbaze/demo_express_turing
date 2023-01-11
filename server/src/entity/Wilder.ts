@@ -13,19 +13,19 @@ class Wilder {
   @Column()
   name: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({ nullable: true })
   bio?: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({ nullable: true })
   city?: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({ nullable: true })
   avatarUrl?: string;
 
-  @Field(() => [Grade])
+  @Field(() => [Grade], { nullable: true })
   @OneToMany(() => Grade, (g) => g.wilder)
   grades: Grade[];
 }
