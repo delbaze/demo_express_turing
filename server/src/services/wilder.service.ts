@@ -37,4 +37,42 @@ export default class WilderService implements IService {
       throw new Error("Il y a eu une erreur");
     }
   }
+  async readOne(id: number) {
+    try {
+      const wilder = await this.db.findOne({
+        where: {
+          id,
+        },
+        relations: { grades: { skill: true } },
+      });
+      if (!wilder) {
+        throw new Error("Ce wilder n'existe pas");
+      }
+      return wilder;
+    } catch (err) {
+      //   console.log(err.message);
+      console.log(err);
+      throw new Error("Il y a eu une erreur");
+    }
+  }
+
+  async deleteWilder(id: number) {
+    try {
+      const { affected } = await this.db.delete(id);
+      if (affected === 0) {
+        return {
+          success: false,
+          message: "Aucun wilder supprimé",
+        };
+        // throw new Error("Aucun wilder supprimé");
+      }
+      return {
+        success: true,
+        message: "Le wilder a été supprimé",
+      };
+    } catch (err) {
+      console.error(err);
+      throw new Error("Il y a eu une erreur");
+    }
+  }
 }
