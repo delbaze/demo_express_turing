@@ -17,11 +17,11 @@ class Grade {
   @Column()
   wilderId: number;
   
-  @Field()
+  @Field(() => Wilder)
   @ManyToOne(() => Wilder, (w) => w.grades, { onDelete: "CASCADE" })
   wilder: Wilder;
 
-  @Field()
+  @Field(() => [Skill])
   @ManyToOne(() => Skill, (s) => s.grades, { onDelete: "CASCADE" })
   skill: Skill;
 

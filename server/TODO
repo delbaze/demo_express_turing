@@ -1,7 +1,7 @@
 ✔ créer un serveur apollo @done(23-01-11 09:58)
 ✔ installer typegraphql et les dépendences @done(23-01-11 10:04)
-☐ Créer une structure de resolveurs qui collera aux routes d'express (sans les remplir) (typages en any)
-☐ Adapter les entités pour créer les types et les inputs (ou arguments)
+✔ Créer une structure de resolveurs qui collera aux routes d'express (sans les remplir) (typages en any) @done(23-01-11 11:18)
+✔ Adapter les entités pour créer les types et les inputs (ou arguments) @done(23-01-11 12:37)
 ☐ Insérer la logique des routes dans des services
 ☐ Appeler cette logique dans les résolveurs
 
