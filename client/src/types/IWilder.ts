@@ -18,3 +18,6 @@ export interface IWilder extends IWilderInput {
   id: number;
   skills: SkillOfWilder[];
 }
+export interface IWilderData {
+  readWilders: IWilder[]
+}

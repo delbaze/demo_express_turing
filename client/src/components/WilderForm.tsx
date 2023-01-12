@@ -2,28 +2,28 @@ import React, { useState, FormEvent, useRef } from "react";
 import { IWilder, IWilderInput } from "../types/IWilder";
 import { createWilder } from "../services/wilders";
 import toast from "react-hot-toast";
-
+import { CREATE_WILDER } from "../services/wilders.mutation";
+import { useMutation } from "@apollo/client";
 interface WilderFormProps {
-  onWilderCreated: (w: IWilder) => void;
+  onWilderCreated: () => void;
 }
 
 export default function WilderForm({ onWilderCreated }: WilderFormProps) {
   const [name, setName] = useState<IWilderInput["name"]>("");
-  const [processing, setProcessing] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    try {
-      setProcessing(true);
-      onWilderCreated(await createWilder({ name }));
+  const [createWilder, { loading }] = useMutation(CREATE_WILDER, {
+    onCompleted: () => {
+      onWilderCreated();
       setName("");
       setTimeout(() => inputRef.current?.focus(), 100);
-    } catch (err) {
+    },
+    onError: () => {
       toast.error("cannot create wilder");
-    } finally {
-      setProcessing(false);
-    }
+    },
+  });
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    createWilder({ variables: { createInput: { name } } });
   };
 
   return (
@@ -35,12 +35,12 @@ export default function WilderForm({ onWilderCreated }: WilderFormProps) {
           type="text"
           maxLength={30}
           id="name"
-          disabled={processing}
+          disabled={loading}
           onChange={(e) => setName(e.target.value)}
           value={name}
         />
       </label>
-      <button type="submit" disabled={processing}>
+      <button type="submit" disabled={loading}>
         +
       </button>
       <br />

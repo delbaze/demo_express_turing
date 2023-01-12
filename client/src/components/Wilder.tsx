@@ -1,25 +1,37 @@
 import React from "react";
 import blank_profile from "../assets/avatar.png";
-import { deleteWilder } from "../services/wilders";
 import Skill from "./Skill";
 import { IWilder } from "../types/IWilder";
-import { Dispatch, SetStateAction } from "react";
 import { Link } from "react-router-dom";
+import {
+  useMutation,
+} from "@apollo/client";
+import { DELETE_WILDER } from "../services/wilders.mutation";
 
 interface WilderProps {
   wilder: IWilder;
-  setWilders: Dispatch<SetStateAction<IWilder[]>>;
+  refreshWilders: Function;
 }
 
 const Wilder = ({
   wilder: { id, name, skills = [], avatarUrl },
-  setWilders,
+  refreshWilders,
 }: WilderProps) => {
+  const [deleteWilder] = useMutation(DELETE_WILDER, {
+    variables: {
+      deleteWilderId: id.toString(),
+    },
+    onCompleted: (data) => {
+      alert(data?.deleteWilder.message);
+      refreshWilders();
+    },
+  });
+
   const handleDelete = async () => {
     if (window.confirm("are you sure ?"))
       try {
-        setWilders((oldList) => oldList.filter((wilder) => wilder.id !== id));
-        await deleteWilder(id);
+        // setWilders((oldList) => oldList.filter((wilder) => wilder.id !== id));
+        await deleteWilder();
       } catch (err) {
         console.error(err);
       }
