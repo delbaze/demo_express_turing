@@ -10,7 +10,7 @@ COPY tsconfig.json ./
 
 RUN npm install
 
-COPY wildersdb.sqlite ./
+# COPY wildersdb.sqlite ./
 
 COPY src src
 
