@@ -1,9 +1,28 @@
-import { IService } from "./interfaces.d";
+import { Context, IService } from "./interfaces.d";
 import { Repository, Like } from "typeorm";
 import Wilder from "../entity/Wilder";
 import datasource from "../db";
 import bcrypt from "bcrypt";
 import * as jwt from "jsonwebtoken";
+import { AuthChecker } from "type-graphql";
+
+export const customAuthChecker: AuthChecker<Context> = (
+  { root, args, context, info },
+  roles
+) => {
+  console.log(roles);
+  //Utiliser roles pour vérifier si dans le context.user
+  //
+  console.log("DEPUIS LE CHECKER : ", context.user);
+  // here we can read the user from context
+  // and check his permission in the db against the `roles` argument
+  // that comes from the `@Authorized` decorator, eg. ["ADMIN", "MODERATOR"]
+  if (context.user) {
+    return true;
+  }
+  return false; // or false if access is denied
+};
+
 export default class WilderService implements IService {
   db: Repository<Wilder>;
   constructor() {

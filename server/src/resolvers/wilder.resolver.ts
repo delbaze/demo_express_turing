@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Arg, Ctx } from "type-graphql";
+import { Resolver, Query, Mutation, Arg, Ctx, Authorized } from "type-graphql";
 import Wilder, {
   AddOrRemoveSkillInput,
   CreateInput,
@@ -34,14 +34,15 @@ export default class WilderResolver {
       throw new Error("Mot de passe ou identifiant erroné");
     }
   }
+  @Authorized('ADMIN')
   @Query(() => [Wilder]) //retournera un tableau de Wilder
   async readWilders(
     @Arg("nameContains", { nullable: true }) nameContains: string,
     @Ctx() ctx: Context
   ): Promise<Wilder[]> {
-    if (!ctx.user){
-      throw new Error("Vous devez être authentifié");
-    }
+    // if (!ctx.user) {
+    //   throw new Error("Vous devez être authentifié");
+    // }
     //retournera un tableau de Wilder
     let wilders = await new WilderService().readWilders(nameContains);
     return wilders;

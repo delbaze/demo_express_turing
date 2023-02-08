@@ -15,12 +15,13 @@ import "reflect-metadata";
 import { buildSchema } from "type-graphql";
 import WilderResolver from "./resolvers/wilder.resolver";
 import SkillResolver from "./resolvers/skill.resolver";
-import WilderService from "./services/wilder.service";
+import WilderService, { customAuthChecker } from "./services/wilder.service";
 
 async function start(): Promise<void> {
   const schema = await buildSchema({
     resolvers: [WilderResolver, SkillResolver],
     validate: false,
+    authChecker: customAuthChecker,
   });
   const server = new ApolloServer({
     schema,
@@ -41,6 +42,12 @@ async function start(): Promise<void> {
       return {
         user,
       };
+    },
+    formatError: (error) => {
+      if (error.extensions.code === "INTERNAL_SERVER_ERROR") {
+        error.message = "Problème d'authentification";
+      }
+      return error;
     },
   });
   server.listen().then(async (data) => {

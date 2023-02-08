@@ -8,7 +8,7 @@ const datasource = new DataSource({
   database: "./wildersdb.sqlite",
   synchronize: true,
   entities: [Wilder, Skill, Grade],
-  logging: ["query", "error"],
+  // logging: ["query", "error"],
 });
 
 export default datasource;
