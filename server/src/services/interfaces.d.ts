@@ -7,4 +7,6 @@ export interface IService {
   db: Repository<Wilder | Skill | Grade>;
 }
 
-
+export interface Context {
+  user: Wilder | null;
+}

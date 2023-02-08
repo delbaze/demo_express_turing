@@ -1,19 +1,47 @@
-import { Resolver, Query, Mutation, Arg } from "type-graphql";
+import { Resolver, Query, Mutation, Arg, Ctx } from "type-graphql";
 import Wilder, {
   AddOrRemoveSkillInput,
   CreateInput,
+  Login,
+  LoginInput,
   UpdateGradeInput,
   UpdateInput,
 } from "../entity/Wilder";
 import { ResponseMessage } from "../services/common.type";
+import { Context } from "../services/interfaces.d";
 import WilderService from "../services/wilder.service";
 
 @Resolver()
 export default class WilderResolver {
+  @Query(() => Login)
+  async login(@Arg("loginInput") loginInput: LoginInput) {
+    const { email, password } = loginInput;
+
+    let wilder = await new WilderService().readOneByEmail(email);
+    let checkPassword = await new WilderService().checkPassword(
+      password,
+      wilder.password
+    );
+    console.log("CHECK PASSWORD", checkPassword);
+    if (checkPassword) {
+      //créer un token
+      let token = new WilderService().generateToken({ email });
+      return {
+        success: true,
+        token,
+      };
+    } else {
+      throw new Error("Mot de passe ou identifiant erroné");
+    }
+  }
   @Query(() => [Wilder]) //retournera un tableau de Wilder
   async readWilders(
-    @Arg("nameContains", {nullable: true}) nameContains: string
+    @Arg("nameContains", { nullable: true }) nameContains: string,
+    @Ctx() ctx: Context
   ): Promise<Wilder[]> {
+    if (!ctx.user){
+      throw new Error("Vous devez être authentifié");
+    }
     //retournera un tableau de Wilder
     let wilders = await new WilderService().readWilders(nameContains);
     return wilders;
@@ -22,21 +50,25 @@ export default class WilderResolver {
   @Query(() => Wilder) //retournera un Wilder
   async readOneWilder(@Arg("id") id: string): Promise<Wilder> {
     let wilder = new WilderService().readOne(+id);
-    return wilder; 
+    return wilder;
   }
 
   @Mutation(() => Wilder) //retounera un Wilder
   async createWilder(
     @Arg("createInput") createInput: CreateInput
   ): Promise<Wilder> {
-    const { name } = createInput;
+    const { name, email, password } = createInput;
     if (name.length > 100 || name.length === 0) {
       throw new Error(
         "the name should have a length between 1 and 100 characters"
       );
     }
 
-    let wilder = await new WilderService().createWilder({ name });
+    let wilder = await new WilderService().createWilder({
+      name,
+      email,
+      password,
+    });
     return wilder; // retournera un Wilder
   }
 

@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
-import { ObjectType, Field, InputType } from "type-graphql";
+import { ObjectType, Field, InputType, ID } from "type-graphql";
 import Grade from "./Grade";
 
 @ObjectType()
@@ -8,6 +8,14 @@ class Wilder {
   @Field()
   @PrimaryGeneratedColumn()
   id: number;
+
+  @Field()
+  @Column({ unique: true })
+  email: string;
+
+  @Field()
+  @Column()
+  password: string;
 
   @Field()
   @Column()
@@ -34,6 +42,20 @@ class Wilder {
 export class CreateInput implements Partial<Wilder> {
   @Field()
   name: string;
+
+  @Field()
+  email: string;
+
+  @Field()
+  password: string;
+}
+@InputType({ description: "login du wilder" })
+export class LoginInput implements Partial<Wilder> {
+  @Field()
+  email: string;
+
+  @Field()
+  password: string;
 }
 
 @InputType({ description: "update du wilder" })
@@ -68,6 +90,15 @@ export class AddOrRemoveSkillInput {
 export class UpdateGradeInput extends AddOrRemoveSkillInput {
   @Field()
   votes: number;
+}
+
+@ObjectType()
+export class Login {
+  @Field()
+  success: boolean;
+
+  @Field()
+  token: string;
 }
 
 export default Wilder;
