@@ -6,6 +6,7 @@ import Wilder, {
   LoginInput,
   UpdateGradeInput,
   UpdateInput,
+  ValidationToken,
 } from "../entity/Wilder";
 import { ResponseMessage } from "../services/common.type";
 import { Context } from "../services/interfaces.d";
@@ -14,9 +15,9 @@ import WilderService from "../services/wilder.service";
 @Resolver()
 export default class WilderResolver {
   @Query(() => Login)
-  async login(@Arg("loginInput") loginInput: LoginInput) {
+  async login(@Arg("loginInput") loginInput: LoginInput, @Ctx() ctx: any) {
     const { email, password } = loginInput;
-
+    console.log(ctx);
     let wilder = await new WilderService().readOneByEmail(email);
     let checkPassword = await new WilderService().checkPassword(
       password,
@@ -34,7 +35,7 @@ export default class WilderResolver {
       throw new Error("Mot de passe ou identifiant erroné");
     }
   }
-  @Authorized('ADMIN')
+  // @Authorized('ADMIN')
   @Query(() => [Wilder]) //retournera un tableau de Wilder
   async readWilders(
     @Arg("nameContains", { nullable: true }) nameContains: string,
@@ -52,6 +53,19 @@ export default class WilderResolver {
   async readOneWilder(@Arg("id") id: string): Promise<Wilder> {
     let wilder = new WilderService().readOne(+id);
     return wilder;
+  }
+
+  @Query(() => ValidationToken)
+  async checkToken(@Ctx() ctx: any): Promise<ValidationToken> {
+    console.log(ctx);
+    let o = {
+      valid: true,
+    };
+    if (!ctx.user) {
+      o.valid = false;
+    }
+    console.log("O", o);
+    return o;
   }
 
   @Mutation(() => Wilder) //retounera un Wilder

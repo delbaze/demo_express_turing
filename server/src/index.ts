@@ -42,17 +42,11 @@ async function start(): Promise<void> {
       return {
         user,
       };
-    },
-    formatError: (error) => {
-      if (error.extensions.code === "INTERNAL_SERVER_ERROR") {
-        error.message = "Problème d'authentification";
-      }
-      return error;
-    },
+    }
   });
   server.listen().then(async (data) => {
     await db.initialize();
-    console.log(`server ready ${data.url}`);
+    console.log(`server ready ! ${data.url}`);
   });
 }
 

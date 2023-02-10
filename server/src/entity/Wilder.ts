@@ -101,4 +101,10 @@ export class Login {
   token: string;
 }
 
+@ObjectType()
+export class ValidationToken {
+  @Field()
+  valid: boolean;
+}
+
 export default Wilder;

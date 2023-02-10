@@ -112,6 +112,7 @@ export default class WilderService implements IService {
     }
   }
   async readOneByEmail(email: string) {
+    console.log("EMAIL", email);
     try {
       const wilder = await this.db.findOne({
         where: {
